@@ -39,7 +39,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 @torch.no_grad()
-def inference(model, data_dict):
+def inference(model, data_dict, device):
     data, label = data_dict['image'], data_dict['label']
     # move data to GPU
     data_dict['image'], data_dict['label'] = data.to(device), label.to(device)
@@ -154,7 +154,7 @@ def extract_aligned_face_dlib(face_detector, predictor, image, res=224, mask=Non
         return None, None, None
 
 
-def load_detector(detector_cfg: str, weights: str):
+def load_detector(detector_cfg: str, weights: str, device):
     with open(detector_cfg, "r") as f:
         cfg = yaml.safe_load(f)
 
@@ -188,6 +188,7 @@ def infer_single_image(
     face_detector,
     landmark_predictor,
     model,
+    device
 ) -> Tuple[int, float]:
     """Return (cls_out, prob)"""
     if face_detector is None or landmark_predictor is None:
@@ -202,7 +203,7 @@ def infer_single_image(
     else: 
         face_tensor = preprocess_face(face_aligned).to(device)
         data = {"image": face_tensor, "label": torch.tensor([0]).to(device)}
-        preds = inference(model, data)
+        preds = inference(model, data, device)
         cls_out = preds["cls"].squeeze().cpu().numpy()   # 0/1
         prob = preds["prob"].squeeze().cpu().numpy()     # prob
         return cls_out, prob
@@ -244,7 +245,7 @@ def parse_args():
 def main():
     args = parse_args()
 
-    model = load_detector(args.detector_config, args.weights)
+    model = load_detector(args.detector_config, args.weights, device)
     if args.landmark_model:
         face_det = dlib.get_frontal_face_detector()
         shape_predictor = dlib.shape_predictor(args.landmark_model)
@@ -263,7 +264,7 @@ def main():
             print(f"[Warning] loading wrong，skip: {img_path}", file=sys.stderr)
             continue
 
-        cls, prob = infer_single_image(img, face_det, shape_predictor, model)
+        cls, prob = infer_single_image(img, face_det, shape_predictor, model, device)
         print(
             f"[{idx}/{len(img_paths)}] {img_path.name:>30} | Pred Label: {cls} "
             f"(0=Real, 1=Fake) | Fake Prob: {prob:.4f}"
