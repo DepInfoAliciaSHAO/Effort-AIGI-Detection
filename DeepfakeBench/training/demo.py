@@ -141,14 +141,17 @@ def extract_aligned_face_dlib(face_detector, predictor, image, res=224, mask=Non
         cropped_face = cv2.cvtColor(cropped_face, cv2.COLOR_RGB2BGR)
         
         # Extract the all landmarks from the aligned face
-        face_align = face_detector(cropped_face, 1)
-        landmark = predictor(cropped_face, face_align[0])
-        landmark = face_utils.shape_to_np(landmark)
+        try:
+            face_align = face_detector(cropped_face, 1)
+            landmark = predictor(cropped_face, face_align[0])
+            landmark = face_utils.shape_to_np(landmark)
 
-        return cropped_face, landmark,face
-    
+            return cropped_face, landmark,face
+        except:
+            return None, None, None
+
     else:
-        return None, None
+        return None, None, None
 
 
 def load_detector(detector_cfg: str, weights: str):
@@ -194,12 +197,15 @@ def infer_single_image(
             face_detector, landmark_predictor, img_bgr, res=224
         )
 
-    face_tensor = preprocess_face(face_aligned).to(device)
-    data = {"image": face_tensor, "label": torch.tensor([0]).to(device)}
-    preds = inference(model, data)
-    cls_out = preds["cls"].squeeze().cpu().numpy()   # 0/1
-    prob = preds["prob"].squeeze().cpu().numpy()     # prob
-    return cls_out, prob
+    if face_aligned is None: 
+        return -1, -1
+    else: 
+        face_tensor = preprocess_face(face_aligned).to(device)
+        data = {"image": face_tensor, "label": torch.tensor([0]).to(device)}
+        preds = inference(model, data)
+        cls_out = preds["cls"].squeeze().cpu().numpy()   # 0/1
+        prob = preds["prob"].squeeze().cpu().numpy()     # prob
+        return cls_out, prob
 
 
 IMG_EXTS = {'.jpg', '.jpeg', '.png', '.bmp', '.tiff', '.webp'}
