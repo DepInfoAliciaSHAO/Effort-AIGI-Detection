@@ -8,7 +8,8 @@ import sys
 import numpy as np
 import csv
 
-ROOT = r"E:\ShareID\TestDataSets\Celeb-DF-v2\laa-net_test_dataset\Celeb-Df-v2\Youtube-real"
+ROOT = r"E:\ShareID\TestDataSets\Celeb-DF-v2\laa-net_test_dataset\Celeb-Df-v2"
+FAKE_TYPES = ["Celeb-real", "Celeb-synthesis", "YouTube-real"]
 MAX_FRAMES = 32
 VID_EXTENSIONS = {".mp4"}
 DETECTOR_CONFIG = "training/config/detector/effort.yaml"
@@ -85,10 +86,12 @@ if __name__ == "__main__":
         face_det, shape_predictor = None, None
 
     vid_probs = {}
-    for file in os.listdir(ROOT):
-        vid_name, extension = os.path.splitext(file)
-        if extension in VID_EXTENSIONS:
-            frames = get_frames(os.path.join(ROOT, file), MAX_FRAMES)
-            cls, probs = results_one_image(frames, face_det, shape_predictor)
-            vid_probs[vid_name] = probs
+    for fake_type in FAKE_TYPES:
+        fake_type_dir = os.path.join(ROOT, fake_type)
+        for file in os.listdir(fake_type_dir):
+            vid_name, extension = os.path.splitext(file)
+            if extension in VID_EXTENSIONS:
+                frames = get_frames(os.path.join(ROOT, file), MAX_FRAMES)
+                cls, probs = results_one_image(frames, face_det, shape_predictor)
+                vid_probs[vid_name] = probs
     save_as_csv(vid_probs, ROOT)
