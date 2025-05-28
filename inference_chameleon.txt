@@ -1,0 +1,2 @@
+python training/demo.py --detector_config training/config/detector/effort.yaml --weights ./training/weights/effort_clip_L14_trainOn_chameleon.pth --image E:\ShareID\TestDataSets\fake_polish_id\1745384614267.jpeg
+

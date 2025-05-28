@@ -1,0 +1,1 @@
+python training/demo.py --detector_config training/config/detector/effort.yaml --weights ./training/weights/effort_clip_L14_trainOn_FaceForensic.pth --image E:\ShareID\code\frames --landmark_model ./preprocessing/shape_predictor_81_face_landmarks.dat
