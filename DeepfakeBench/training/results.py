@@ -91,7 +91,7 @@ if __name__ == "__main__":
         for file in os.listdir(fake_type_dir):
             vid_name, extension = os.path.splitext(file)
             if extension in VID_EXTENSIONS:
-                frames = get_frames(os.path.join(ROOT, file), MAX_FRAMES)
+                frames = get_frames(os.path.join(fake_type_dir, file), MAX_FRAMES)
                 cls, probs = results_one_image(frames, face_det, shape_predictor)
                 vid_probs[vid_name] = probs
     save_as_csv(vid_probs, ROOT)
