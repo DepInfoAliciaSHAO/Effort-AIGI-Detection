@@ -8,8 +8,15 @@ import sys
 import numpy as np
 import csv
 
-ROOT = r"E:\ShareID\TestDataSets\Celeb-DF-v2\laa-net_test_dataset\Celeb-Df-v2"
-FAKE_TYPES = ["Celeb-real", "Celeb-synthesis", "YouTube-real"]
+ROOT = r"E:\ShareID\TestDataSets\Forensic\ff++_test"
+FAKE_TYPES = [r"original_sequences\actors",
+              r"original_sequences\youtube",
+              r"manipulated_sequences\DeepFakeDetection",
+              r"manipulated_sequences\Deepfakes",
+              r"manipulated_sequences\Face2Face",
+              r"manipulated_sequences\FaceShifter",
+              r"manipulated_sequences\FaceSwap",
+              r"manipulated_sequences\NeuralTextures"]
 MAX_FRAMES = 32
 VID_EXTENSIONS = {".mp4"}
 DETECTOR_CONFIG = "training/config/detector/effort.yaml"
@@ -25,7 +32,8 @@ def results_one_image(frames, face_detector, shape_predictor):
             continue
 
         cls, prob = demo.infer_single_image(img, face_detector, shape_predictor, model, device)
-        prob_list.append(prob.item())
+        if not isinstance(prob, int):
+            prob_list.append(prob.item())
         print(
             f"[{idx}/{len(frames)}] {idx} | Pred Label: {cls} "
             f"(0=Real, 1=Fake) | Fake Prob: {prob:.4f}"
