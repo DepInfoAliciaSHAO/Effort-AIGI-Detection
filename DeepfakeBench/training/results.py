@@ -86,11 +86,14 @@ if __name__ == "__main__":
         face_det, shape_predictor = None, None
 
     vid_probs = {}
+    n_counter = 0
     for fake_type in FAKE_TYPES:
         fake_type_dir = os.path.join(ROOT, fake_type)
         for file in os.listdir(fake_type_dir):
             vid_name, extension = os.path.splitext(file)
             if extension in VID_EXTENSIONS:
+                n_counter += 1            
+                print(f"-----------------{file}--{n_counter}-----------------")
                 frames = get_frames(os.path.join(fake_type_dir, file), MAX_FRAMES)
                 cls, probs = results_one_image(frames, face_det, shape_predictor)
                 vid_probs[vid_name] = probs
