@@ -18,7 +18,7 @@ FAKE_TYPES = [r"original_sequences\actors",
               r"manipulated_sequences\FaceSwap",
               r"manipulated_sequences\NeuralTextures"]
 MAX_FRAMES = 32
-VID_EXTENSIONS = {".mp4"}
+VID_EXTENSIONS = {".mp4", ".mov", ".MOV"}
 DETECTOR_CONFIG = "training/config/detector/effort.yaml"
 WEIGHTS = "./training/weights/effort_clip_L14_trainOn_FaceForensic.pth"
 LANDMARK_MODEL = "./preprocessing/shape_predictor_81_face_landmarks.dat"
